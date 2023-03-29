@@ -100,5 +100,25 @@
         }
 
         #endregion
-    }
+
+        public static explicit operator double[](Pudelko p1)
+        {
+            switch (p1._measure)
+            {
+                case UnitOfMeasure.meter:
+                    return new double[] { p1.A, p1.B, p1.C };
+                case UnitOfMeasure.centimiter:
+                    return new double[] { p1.A / 100, p1.B / 100, p1.C / 100 };
+                case UnitOfMeasure.milimeter:
+                    return new double[] { p1.A / 1000, p1.B / 1000, p1.C / 1000 };
+                default:
+                    throw new ArgumentException();
+            }
+        }
+
+        public static implicit operator Pudelko((int a, int b, int c) p1)
+        {
+            
+        }
+    }                                                     
 }
