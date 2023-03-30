@@ -1,6 +1,8 @@
-﻿namespace PudelkoLib
+﻿using System.Collections;
+
+namespace PudelkoLib
 {
-    public class Pudelko : IFormattable, IEquatable<Pudelko>
+    public class Pudelko : IFormattable, IEquatable<Pudelko>, IEnumerable<double>
     {
         private readonly double _a;
         private readonly double _b;
@@ -15,15 +17,33 @@
             if ((a > 10 || b > 10 || c > 10) && measure == UnitOfMeasure.meter)
                 throw new ArgumentOutOfRangeException();
 
-            _a = a;
-            _b = b;
-            _c = c;
+
+            switch (measure)
+            {
+                case UnitOfMeasure.meter:
+                    _a = a;
+                    _b = b;
+                    _c = c;
+                    break;
+                case UnitOfMeasure.centimiter:
+                    _a = a / 100;
+                    _b = b / 100;
+                    _c = c / 100;
+                    break;
+                case UnitOfMeasure.milimeter:
+                    _a = a / 1000;
+                    _b = b / 1000;
+                    _c = c / 1000;
+                    break;
+            }
+
             _measure = measure;
         }
 
         public double A => _a;
         public double B => _b;
         public double C => _c;
+        public UnitOfMeasure Measure => _measure;
 
         public override string ToString() => $"{A:F3} m × {B:F3} m × {C:F3} m";
 
@@ -51,32 +71,16 @@
 
             var other = (Pudelko)obj;
 
-            return A.Equals(other.A) && B.Equals(other.B) && C.Equals(other.C);
+            return A == other.A && B == other.B && C == other.C;
         }
 
         public bool Equals(Pudelko other)
         {
-            if (other == null)
+            if (other is null)
                 return false;
 
             double[] dimensions = { A, B, C };
             double[] otherDimensions = { other.A, other.B, other.C };
-
-            if (_measure != UnitOfMeasure.meter)
-            {
-                if (_measure == UnitOfMeasure.centimiter)
-                    dimensions = Array.ConvertAll(dimensions, x => x * 100);
-                if (_measure == UnitOfMeasure.milimeter)
-                    dimensions = Array.ConvertAll(dimensions, x => x * 1000);
-            }
-
-            if (other._measure != UnitOfMeasure.meter)
-            {
-                if (other._measure == UnitOfMeasure.centimiter)
-                    dimensions = Array.ConvertAll(dimensions, x => x * 100);
-                if (other._measure == UnitOfMeasure.milimeter)
-                    dimensions = Array.ConvertAll(dimensions, x => x * 1000);
-            }
 
             Array.Sort(dimensions);
             Array.Sort(otherDimensions);
@@ -86,7 +90,7 @@
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(A, B, C, _measure);
+            return HashCode.Combine(A, B, C, Measure);
         }
 
         public static bool operator ==(Pudelko p1, Pudelko p2)
@@ -103,7 +107,7 @@
 
         public static explicit operator double[](Pudelko p1)
         {
-            switch (p1._measure)
+            switch (p1.Measure)
             {
                 case UnitOfMeasure.meter:
                     return new double[] { p1.A, p1.B, p1.C };
@@ -116,9 +120,72 @@
             }
         }
 
-        public static implicit operator Pudelko((int a, int b, int c) p1)
+        public static implicit operator Pudelko((int a, int b, int c) dimesions)
         {
-            
+            double a = dimesions.a;
+            double b = dimesions.b;
+            double c = dimesions.c;
+
+            return new Pudelko(a, b, c, UnitOfMeasure.milimeter);
+        }
+
+        public double this[int side]
+        {
+            get
+            {
+                switch (side)
+                {
+                    case 0:
+                        return A;
+                    case 1:
+                        return B;
+                    case 2:
+                        return C;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
+        public IEnumerator<double> GetEnumerator()
+        {
+            yield return A;
+            yield return B;
+            yield return C;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public static Pudelko PudelkoDimensionsParse(string data)
+        {
+            string[] dimensions = data.Split('×');
+            dimensions = dimensions.Select(x => x.Trim()).ToArray();
+
+            double[] valuse = new double[dimensions.Length];
+            string[] units = new string[dimensions.Length];
+
+            for (int i = 0; i < dimensions.Length; i++)
+            {
+                string[] parts = dimensions[i].Split(' ');
+                valuse[i] = double.Parse(parts[0]);
+                units[i] = parts[1];
+            }
+
+            UnitOfMeasure unit = new();
+
+            if (units[0] == "m")
+                unit = UnitOfMeasure.meter;
+            if (units[0] == "cm")
+                unit = UnitOfMeasure.centimiter;
+            if (units[0] == "mm")
+                unit = UnitOfMeasure.milimeter;
+            else
+                throw new ArgumentException("Niepoprawna miara długości");
+
+            return new Pudelko(valuse[0], valuse[1], valuse[2], unit);
         }
     }                                                     
 }
