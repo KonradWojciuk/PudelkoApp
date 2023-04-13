@@ -1,53 +1,59 @@
 ﻿using System.Collections;
 
-namespace PudelkoLib
+namespace PudelkoLibrary
 {
     public class Pudelko : IFormattable, IEquatable<Pudelko>, IEnumerable<double>
     {
+        public const int PRECISION = 3;
         private readonly double _a;
         private readonly double _b;
         private readonly double _c;
-        private readonly UnitOfMeasure _measure;
+        private readonly UnitOfMeasure _unit;
 
-        public Pudelko(double a = 0.1, double b = 0.1, double c = 0.1, UnitOfMeasure measure = UnitOfMeasure.meter)
-        {
-            if (a < 0 || b < 0 || c < 0)
+        public Pudelko(double a = 0.1, double b = 0.1, double c = 0.1, UnitOfMeasure unit = UnitOfMeasure.meter)
+        { 
+            if ((a > 10 || b > 10 || c > 10) && unit == UnitOfMeasure.meter)
                 throw new ArgumentOutOfRangeException();
 
-            if ((a > 10 || b > 10 || c > 10) && measure == UnitOfMeasure.meter)
+            if ((a > 1000 || b > 1000 || c > 1000) && unit == UnitOfMeasure.centimeter)
                 throw new ArgumentOutOfRangeException();
 
+            if ((a > 10000 || b > 10000 || c > 10000) && unit == UnitOfMeasure.milimeter)
+                throw new ArgumentOutOfRangeException();
 
-            switch (measure)
+            switch (unit)
             {
                 case UnitOfMeasure.meter:
-                    _a = a;
-                    _b = b;
-                    _c = c;
+                    _a = Math.Floor(a * 1000) / 1000;
+                    _b = Math.Floor(b * 1000) / 1000;
+                    _c = Math.Floor(c * 1000) / 1000;
                     break;
-                case UnitOfMeasure.centimiter:
-                    _a = a / 100;
-                    _b = b / 100;
-                    _c = c / 100;
+                case UnitOfMeasure.centimeter:
+                    _a = Math.Round(a / 100, 1);
+                    _b = Math.Round(b / 100, 1);
+                    _c = Math.Round(c / 100, 1);
                     break;
                 case UnitOfMeasure.milimeter:
-                    _a = a / 1000;
-                    _b = b / 1000;
-                    _c = c / 1000;
+                    _a = Math.Round(a / 1000);
+                    _b = Math.Round(b / 1000);
+                    _c = Math.Round(c / 1000);
                     break;
             }
 
-            _measure = measure;
+            if (_a <= 0 || _b <= 0 || _c <= 0)
+                throw new ArgumentOutOfRangeException();
+
+            _unit = unit;
         }
 
         public double A => _a;
         public double B => _b;
         public double C => _c;
-        public UnitOfMeasure Measure => _measure;
+        public UnitOfMeasure Measure => _unit;
 
         public override string ToString() => $"{A:F3} m × {B:F3} m × {C:F3} m";
 
-        public string ToString(string? format, IFormatProvider? formatProvider)
+        public string ToString(string? format, IFormatProvider? formatProvider = null)
         {
             return format switch
             {
@@ -111,7 +117,7 @@ namespace PudelkoLib
             {
                 case UnitOfMeasure.meter:
                     return new double[] { p1.A, p1.B, p1.C };
-                case UnitOfMeasure.centimiter:
+                case UnitOfMeasure.centimeter:
                     return new double[] { p1.A / 100, p1.B / 100, p1.C / 100 };
                 case UnitOfMeasure.milimeter:
                     return new double[] { p1.A / 1000, p1.B / 1000, p1.C / 1000 };
@@ -122,9 +128,9 @@ namespace PudelkoLib
 
         public static implicit operator Pudelko((int a, int b, int c) dimesions)
         {
-            double a = dimesions.a;
-            double b = dimesions.b;
-            double c = dimesions.c;
+            int a = dimesions.a;
+            int b = dimesions.b;
+            int c = dimesions.c;
 
             return new Pudelko(a, b, c, UnitOfMeasure.milimeter);
         }
@@ -179,7 +185,7 @@ namespace PudelkoLib
             if (units[0] == "m")
                 unit = UnitOfMeasure.meter;
             if (units[0] == "cm")
-                unit = UnitOfMeasure.centimiter;
+                unit = UnitOfMeasure.centimeter;
             if (units[0] == "mm")
                 unit = UnitOfMeasure.milimeter;
             else

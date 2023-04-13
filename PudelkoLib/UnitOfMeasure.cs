@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PudelkoLib
+namespace PudelkoLibrary
 {
     public enum UnitOfMeasure
     {
         meter,
-        centimiter,
+        centimeter,
         milimeter
     }
 }
