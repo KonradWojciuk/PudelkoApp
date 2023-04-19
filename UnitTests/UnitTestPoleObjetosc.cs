@@ -72,10 +72,12 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void OperatorEqualsReturnCorrectValueForSamePudelka()
+        [DataRow(200.0, 600.0, 400.0, UnitOfMeasure.centimeter)]
+        [DataRow(2000, 6000, 4000, UnitOfMeasure.milimeter)]
+        public void OperatorEqualsReturnCorrectValueForSamePudelkaInMeters(double a, double b, double c, UnitOfMeasure unit)
         {
-            Pudelko p1 = new(21.2, 13.3, 98.1, UnitOfMeasure.centimeter);
-            Pudelko p2 = new(0.212, 0.133, 0.981);
+            Pudelko p1 = new(2, 4, 6);
+            Pudelko p2 = new(a, b, c, unit);
 
             bool result = p1 == p2;
 
@@ -83,10 +85,39 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void OperatorEqualsReturnFalseForDiffrentPudelka()
+        [DataRow(2.2, 3.0, 4.5, UnitOfMeasure.meter)]
+        [DataRow(2200, 3000, 4500, UnitOfMeasure.milimeter)]
+        public void OperatorEqualsReturnCorrectValueForSamePudelkaInCentimeter(double a, double b, double c, UnitOfMeasure unit)
         {
-            Pudelko p1 = new(21.2, 13.3, 98.1, UnitOfMeasure.centimeter);
-            Pudelko p2 = new(2000, 133, 981, UnitOfMeasure.milimeter);
+            Pudelko p1 = new(220.0, 300.0, 450.0, UnitOfMeasure.centimeter);
+            Pudelko p2 = new(a, b, c, unit);
+
+            bool result = p1 == p2;
+
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        [DataRow(3.3, 1.2, 8.74, UnitOfMeasure.meter)]
+        [DataRow(330.0, 120.0, 874.0, UnitOfMeasure.centimeter)]
+        public void OperatorEqualsReturnCorrectValueForSamePudelkaInMilimeter(double a, double b, double c, UnitOfMeasure unit)
+        {
+            Pudelko p1 = new(3300, 1200, 8740, UnitOfMeasure.milimeter);
+            Pudelko p2 = new(a, b, c, unit);
+
+            bool result = p1 == p2;
+
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        [DataRow(3, 4.121, 3.11, UnitOfMeasure.meter)]
+        [DataRow(2000, 4332, 432, UnitOfMeasure.milimeter)]
+        [DataRow(321.0, 432.8, 100.2, UnitOfMeasure.centimeter)]
+        public void OperatorEqualsReturnFalseForDiffrentPudelka(double a, double b, double c, UnitOfMeasure unit)
+        {
+            Pudelko p1 = new(100.0, 456.0, 731.1, UnitOfMeasure.centimeter);
+            Pudelko p2 = new(a, b, c, unit);
 
             bool result = p1 == p2;
 
@@ -94,9 +125,12 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void OperatorNotEqualsReturnTrueForDiffrentPudelka()
+        [DataRow(3.12, 3, 0.890, UnitOfMeasure.meter)]
+        [DataRow(312.0, 311.9, 311.9, UnitOfMeasure.centimeter)]
+        [DataRow(987, 4321, 3222, UnitOfMeasure.milimeter)]
+        public void OperatorNotEqualsReturnTrueForDiffrentPudelka(double a, double b, double c, UnitOfMeasure unit)
         {
-            Pudelko p1 = new(222.1, 122.4, 589.6, UnitOfMeasure.centimeter);
+            Pudelko p1 = new(a, b, c, unit);
             Pudelko p2 = new(2021, 1124, 4896, UnitOfMeasure.milimeter);
 
             bool result = p1 != p2;
@@ -105,9 +139,12 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void OperatorNotEqualsReturnFalseForSamePudelka()
+        [DataRow(2.133, 5.4, 3.121, UnitOfMeasure.meter)]
+        [DataRow(213.3, 540.0, 312.1, UnitOfMeasure.centimeter)]
+        [DataRow(2133, 5400, 3121, UnitOfMeasure.milimeter)]
+        public void OperatorNotEqualsReturnFalseForSamePudelka(double a, double b, double c, UnitOfMeasure unit)
         {
-            Pudelko p1 = new(2.133, 5.4, 3.121);
+            Pudelko p1 = new(a, b, c, unit);
             Pudelko p2 = new(213.3, 540.0, 312.1, UnitOfMeasure.centimeter);
 
             bool result = p1 != p2;
