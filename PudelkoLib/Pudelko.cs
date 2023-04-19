@@ -2,7 +2,7 @@
 
 namespace PudelkoLibrary
 {
-    public class Pudelko : IFormattable, IEquatable<Pudelko>, IEnumerable<double>
+    public sealed class Pudelko : IFormattable, IEquatable<Pudelko>, IEnumerable<double>
     {
         public const int PRECISION = 3;
         private readonly double _a;
@@ -193,9 +193,9 @@ namespace PudelkoLibrary
 
             if (units[0] == "m")
                 unit = UnitOfMeasure.meter;
-            if (units[0] == "cm")
+            else if (units[0] == "cm")
                 unit = UnitOfMeasure.centimeter;
-            if (units[0] == "mm")
+            else if (units[0] == "mm")
                 unit = UnitOfMeasure.milimeter;
             else
                 throw new ArgumentException("Niepoprawna miara długości");
