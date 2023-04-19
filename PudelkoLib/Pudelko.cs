@@ -29,14 +29,14 @@ namespace PudelkoLibrary
                     _c = Math.Floor(c * 1000) / 1000;
                     break;
                 case UnitOfMeasure.centimeter:
-                    _a = Math.Round(a / 100, 1);
-                    _b = Math.Round(b / 100, 1);
-                    _c = Math.Round(c / 100, 1);
+                    _a = Math.Round(a / 100, PRECISION);
+                    _b = Math.Round(b / 100, PRECISION);
+                    _c = Math.Round(c / 100, PRECISION);
                     break;
                 case UnitOfMeasure.milimeter:
-                    _a = Math.Round(a / 1000);
-                    _b = Math.Round(b / 1000);
-                    _c = Math.Round(c / 1000);
+                    _a = Math.Round(a / 1000, PRECISION);
+                    _b = Math.Round(b / 1000, PRECISION);
+                    _c = Math.Round(c / 1000, PRECISION);
                     break;
             }
 
@@ -66,7 +66,7 @@ namespace PudelkoLibrary
 
         public double Objetosc => Math.Round(A * B * C, 9);
 
-        public double Pole => Math.Round(2 * A + 2 * B + 2 * C, 6);
+        public double Pole => Math.Round(2 * A * B + 2 * A * C + 2 * B * C, 6);
 
         #region Equals(), GetHash() and overload operators: '==', '!=', '+'
 
@@ -107,6 +107,15 @@ namespace PudelkoLibrary
         public static bool operator !=(Pudelko p1, Pudelko p2)
         {
             return !p1.Equals(p2);
+        }
+
+        public static Pudelko operator +(Pudelko p1, Pudelko p2)
+        {
+            double a = p1.A + p2.A;
+            double b = Math.Max(p1.B, p2.B);
+            double c = Math.Max(p1.C, p2.C);
+
+            return new Pudelko(a, b, c);
         }
 
         #endregion
