@@ -24,16 +24,23 @@ namespace PudelkoLibrary
             switch (unit)
             {
                 case UnitOfMeasure.meter:
+                    
                     _a = Math.Floor(a * 1000) / 1000;
                     _b = Math.Floor(b * 1000) / 1000;
                     _c = Math.Floor(c * 1000) / 1000;
                     break;
                 case UnitOfMeasure.centimeter:
+                    if (a == 0.1) a *= 100;
+                    if (b == 0.1) b *= 100;
+                    if (c == 0.1) c *= 100;
                     _a = Math.Round(a / 100, PRECISION);
                     _b = Math.Round(b / 100, PRECISION);
                     _c = Math.Round(c / 100, PRECISION);
                     break;
                 case UnitOfMeasure.milimeter:
+                    if (a == 0.1) a *= 1000;
+                    if (b == 0.1) b *= 1000;
+                    if (c == 0.1) c *= 1000;
                     _a = Math.Round(a / 1000, PRECISION);
                     _b = Math.Round(b / 1000, PRECISION);
                     _c = Math.Round(c / 1000, PRECISION);
@@ -55,11 +62,14 @@ namespace PudelkoLibrary
 
         public string ToString(string? format, IFormatProvider? formatProvider = null)
         {
+            if (string.IsNullOrEmpty(format))
+                format = "m";
+
             return format switch
             {
                 "m" => $"{A:F3} m × {B:F3} m × {C:F3} m",
                 "cm" => $"{A * 100:F1} cm × {B * 100:F1} cm × {C * 100:F1} cm",
-                "mm" => $"{A * 1000:F0} mm × {B * 1000:F0} mm × {C * 1000:F1} mm",
+                "mm" => $"{A * 1000:F0} mm × {B * 1000:F0} mm × {C * 1000:F0} mm",
                 _ => throw new FormatException(),
             };
         }

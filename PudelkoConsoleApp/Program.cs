@@ -13,6 +13,7 @@ namespace PudelkoConsoleApp
             return new Pudelko(side, side, side);
         }
 
+
         static void Main(string[] args)
         {
             // Sortowanie pudełek 
